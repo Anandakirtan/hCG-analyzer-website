@@ -1,0 +1,141 @@
+body {
+    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+    background-color: rgb(74, 219, 171);
+    display: flex;
+    align-items: center;
+    overflow: auto;
+}
+  
+#wrapper {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    
+}
+
+h1 {
+    color: navy;
+    margin-left: 20px;
+}
+
+input {
+    display: inline-block;
+    margin: 15px 0px;
+    padding-left: 10px;
+    height: 45px;
+    width: 80%;
+    font-size: 34px;
+    border-radius: 15px;
+    outline: none;
+}
+
+input[type="date"] {
+    padding-left: 0;
+    width: 325px;
+}
+
+#send {
+    font-size: 34px;
+    width: 30%;
+    background-color: rgb(104, 184, 0);
+}
+
+#output_wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+}
+
+#output {
+    height: 200px;
+    font-size: 50px;
+}
+
+#analizy_header{
+    font-size: 65px;
+    margin: 6px 0px;
+}
+
+#congratulations{
+    position: absolute;
+    bottom: 10%;
+    font-size: 100px;
+}
+
+.container {
+    width: 100%;
+    height: 100%;
+    margin: 0;
+}
+
+.analizy{
+    margin-right: 20px;
+}
+
+.analizy_values{
+    width: 180px;
+    margin-right: 20px;
+}
+
+.conception_wrapper{
+    width: 100%;
+    margin-top: 30px;
+}
+
+.conception_bar{
+    display: flex;
+    margin-bottom: 20px;
+}
+
+.analizy_wrapper{
+    width: 90%;
+}
+
+#analizy_header{
+    margin: 0;
+}
+
+.analiz_output{
+    display: flex;
+    align-items: center;
+    text-align: left;
+    width:60%;
+    font-size: 25px;
+}
+
+.analyze_bar{
+    width: 100%;
+    display: flex;
+}
+
+.conception_title{
+    font-size: 28px;
+    margin: 0;
+}
+
+.conception_input{
+    width: 40%;
+}
+
+.conception_output{
+    display: flex;
+    width: 50%;
+    font-size: 30px;
+    align-items: center;
+    justify-content: center;
+    padding-top: 30px;
+}
+
+p{
+    margin: 0;
+}
+
+#cycle_length{
+    width: 325px;
+}
+
+@import url(https://fonts.googleapis.com/css?family=Righteous);

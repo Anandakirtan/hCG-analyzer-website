@@ -1,0 +1,62 @@
+<HTML lang="ru">
+    <HEAD>
+        <TITLE>TITLE</TITLE>
+        <link rel="stylesheet" type="text/css" href="style.css">
+        <meta charset="UTF-8">
+    </HEAD>
+
+    <BODY class="container">
+        <div id="wrapper">
+            <div class="conception_wrapper">
+                <div class="conception_bar">
+                    <div class="conception_input">
+                        <p class=conception_title>Дата последней менструации</p>
+                        <input type="date" id="pdpm_date">
+                        <input type="text" id="cycle_length" placeholder="Длина цикла">
+                    </div>
+                    <div class="conception_output">
+                        <p id="menstr_diff"></p>
+                    </div>
+                </div>
+                <div class="conception_bar">
+                    <div class="conception_input">
+                        <p class=conception_title>Дата зачатия</p>
+                        <input type="date" id="conception_date">
+                    </div>
+                    <div class="conception_output">
+                        <p id="conception_diff"></p>
+                    </div>
+                </div>
+            </div>
+            <div class="analizy_wrapper">
+                <p id="analizy_header">Анализы</p>
+                <div class="analyze_bar">
+                    <input type="value" class="analizy_values" id="hcg_1" placeholder="Анализ 1">
+                    <input type="date" class="analizy" id="analyz_date_1" placeholder="Дата анализа 1">
+                    <div class="analiz_output">
+                        <p id="anoutp_1"></p>
+                    </div>
+                </div>
+                <div class="analyze_bar">
+                    <input type="value" class="analizy_values" id="hcg_2" placeholder="Анализ 2">
+                    <input type="date" class="analizy" id="analyz_date_2" placeholder="Дата анализа 2">
+                    <div class="analiz_output">
+                        <p id="anoutp_2"></p>
+                    </div>
+                </div>
+                <div class="analyze_bar">
+                    <input type="value" class="analizy_values" id="hcg_3" placeholder="Анализ 3">
+                    <input type="date" class="analizy" id="analyz_date_3" placeholder="Дата анализа 3">
+                    <div class="analiz_output">
+                        <p id="anoutp_3"></p>
+                    </div>
+                </div>
+            </div>
+            <input type="button" id="send" onclick=calculate() value="Посчитать" onkeypress="return enterPressHopefully(event)">
+            <div class="analiz_output">
+                <p id="approximation_output"></p>
+            </div>
+        </div>
+    </BODY>
+    <script src="scipts.js"></script>
+</HTML>
