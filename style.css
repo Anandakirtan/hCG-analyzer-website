@@ -1,6 +1,6 @@
 body {
     font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
-    background-color: rgb(74, 219, 171);
+    background-color: rgb(138, 236, 207);
     display: flex;
     align-items: center;
     overflow: auto;
@@ -40,7 +40,7 @@ input[type="date"] {
 #send {
     font-size: 34px;
     width: 30%;
-    background-color: rgb(104, 184, 0);
+    background-color: rgb(122, 214, 2);
 }
 
 #output_wrapper {

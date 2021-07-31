@@ -29,7 +29,10 @@
                 </div>
             </div>
             <div class="analizy_wrapper">
-                <p id="analizy_header">Анализы</p>
+                <input type="button" id="send" onclick=calculate() value="Посчитать" onkeypress="return enterPressHopefully(event)">
+                <div class="analiz_output">
+                    <p id="approximation_output"></p>
+                </div>
                 <div class="analyze_bar">
                     <input type="value" class="analizy_values" id="hcg_1" placeholder="Анализ 1">
                     <input type="date" class="analizy" id="analyz_date_1" placeholder="Дата анализа 1">
@@ -51,10 +54,20 @@
                         <p id="anoutp_3"></p>
                     </div>
                 </div>
-            </div>
-            <input type="button" id="send" onclick=calculate() value="Посчитать" onkeypress="return enterPressHopefully(event)">
-            <div class="analiz_output">
-                <p id="approximation_output"></p>
+                <div class="analyze_bar">
+                    <input type="value" class="analizy_values" id="hcg_4" placeholder="Анализ 4">
+                    <input type="date" class="analizy" id="analyz_date_4" placeholder="Дата анализа 4">
+                    <div class="analiz_output">
+                        <p id="anoutp_4"></p>
+                    </div>
+                </div>
+                <div class="analyze_bar">
+                    <input type="value" class="analizy_values" id="hcg_5" placeholder="Анализ 5">
+                    <input type="date" class="analizy" id="analyz_date_5" placeholder="Дата анализа 5">
+                    <div class="analiz_output">
+                        <p id="anoutp_5"></p>
+                    </div>
+                </div>
             </div>
         </div>
     </BODY>
