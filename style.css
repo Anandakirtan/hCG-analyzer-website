@@ -34,7 +34,7 @@ input {
 
 input[type="date"] {
     padding-left: 0;
-    width: 325px;
+    width: 285px;
 }
 
 #send {
@@ -135,7 +135,7 @@ p{
 }
 
 #cycle_length{
-    width: 325px;
+    width: 225px;
 }
 
 @import url(https://fonts.googleapis.com/css?family=Righteous);
