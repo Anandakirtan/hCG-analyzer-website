@@ -6,4 +6,4 @@ Don't understand much about it, just implemented what my mom had always been doi
 
 Very simple, but it does its job. 
 
-https://anandakirtan.github.io/hCG-analyzer-website/index
+Available [**here**](https://anandakirtan.github.io/hCG-analyzer-website/index).
