@@ -1,6 +1,6 @@
 body {
     font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
-    background-color: rgb(138, 236, 207);
+    background-color: rgb(129, 236, 201);
     display: flex;
     align-items: center;
     overflow: auto;
@@ -40,7 +40,7 @@ input[type="date"] {
 #send {
     font-size: 34px;
     width: 30%;
-    background-color: rgb(122, 214, 2);
+    background-color: rgb(187, 241, 60);
 }
 
 #output_wrapper {
@@ -105,6 +105,15 @@ input[type="date"] {
     text-align: left;
     width:60%;
     font-size: 25px;
+}
+
+.date_output{
+    margin-left: 10px;
+    display: flex;
+    width: 60px;
+    font-size: 28px;
+    align-items: center;
+    text-align: center;
 }
 
 .analyze_bar{

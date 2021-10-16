@@ -211,19 +211,21 @@ function get_conception_date() {
     let menstr_date = new Date(pdpm_input);
     conc_diff = Math.round((today-conception_date)/(1000*60*60*24));
     menstr_diff = Math.round((today-menstr_date)/(1000*60*60*24));
-    conception_diff_outp.innerText = `Со дня зачатия прошло ${conc_diff - 1} дней`;
+    conception_diff_outp.innerText = `Сегодня со дня зачатия прошло ${conc_diff - 1} дней`;
     if (!isNaN(menstr_diff)) {
-        menstr_diff_outp.innerText = `Со дня последней менструации прошло ${menstr_diff - 1} дней`;
+        menstr_diff_outp.innerText = `Сегодня со дня последней менструации прошло ${menstr_diff - 1} дней`;
     }
 
     return conception_date;
 }
 
-function output_plain(hcg, date, conception_date, anoutput){
+function output_plain(hcg, date, conception_date, anoutput, date_output){
     let diff = Math.round((date - conception_date)/(1000*60*60*24));
-    if (!isNaN(hcg)){
+    if (!isNaN(hcg) && !isNaN(diff)){
+        date_output.innerText = `${diff}`;
+        date_output.title = `Дней со дня зачатия`;
         if (!isNaN(diff) && !median_hcg_by_day.has(diff)){
-            anoutput.innerText = `Нет табличных данных. Со дня зачатия прошло ${diff} дней`;
+            anoutput.innerText = `Нет табличных данных (со дня зачатия прошло ${diff} дней)`;
             return;
         }
         if (hcg >= lower_hcg_by_day.get(diff) && hcg <= upper_hcg_by_day.get(diff)) {
@@ -240,26 +242,28 @@ function output_plain(hcg, date, conception_date, anoutput){
     }
 }
 
-function output_prediction(hcg, date, conception_date, anoutput, prev_hcg, prev_date){
+function output_prediction(hcg, date, conception_date, anoutput, date_output, prev_hcg, prev_date){
     let diff = Math.round((date - conception_date)/(1000*60*60*24));
     let prev_diff = Math.round((prev_date - conception_date)/(1000*60*60*24));
     let pred_coef = Math.round(median_hcg_by_day.get(diff) / median_hcg_by_day.get(prev_diff));
     let prediction = prev_hcg * pred_coef;
     let rel_diff = Math.round((hcg - prediction) / (prediction) * 100);
-    if (!isNaN(hcg)){
+    if (!isNaN(hcg) && !isNaN(diff)){
+        date_output.innerText = `${diff}`;
+        date_output.title = `Дней со дня зачатия`;
         if (!isNaN(diff) && !median_hcg_by_day.has(diff)){
-            anoutput.innerText = `Нет табличных данных. Со дня зачатия прошло ${diff} дней`;
+            anoutput.innerText = `Нет табличных данных (со дня зачатия прошло ${diff} дней)`;
             return;
         }
         if (hcg >= lower_hcg_by_day.get(diff) && hcg <= upper_hcg_by_day.get(diff)) {
-            anoutput.innerText = `В норме. (${lower_hcg_by_day.get(diff)} - ${upper_hcg_by_day.get(diff)}, медиана ${median_hcg_by_day.get(diff)}). Должно быть ${prediction}, отклонение ${rel_diff}%`;
+            anoutput.innerText = `В норме. (${lower_hcg_by_day.get(diff)} - ${upper_hcg_by_day.get(diff)}, медиана ${median_hcg_by_day.get(diff)}). ` + (!isNaN(rel_diff) ? `Должно быть ${prediction}, отклонение ${rel_diff}%` : ``);
         }
         else {
             if (hcg < lower_hcg_by_day.get(diff)) {
-                anoutput.innerText = `Меньше нормы. (${lower_hcg_by_day.get(diff)} - ${upper_hcg_by_day.get(diff)}, медиана ${median_hcg_by_day.get(diff)}). Должно быть ${prediction}, отклонение ${rel_diff}%`;
+                anoutput.innerText = `Меньше нормы. (${lower_hcg_by_day.get(diff)} - ${upper_hcg_by_day.get(diff)}, медиана ${median_hcg_by_day.get(diff)}). `  + (!isNaN(rel_diff) ? `Должно быть ${prediction}, отклонение ${rel_diff}%` : ``);
             }
             if (hcg > upper_hcg_by_day.get(diff)) {
-                anoutput.innerText = `Больше нормы. (${lower_hcg_by_day.get(diff)} - ${upper_hcg_by_day.get(diff)}, медиана ${median_hcg_by_day.get(diff)}). Должно быть ${prediction}, отклонение ${rel_diff}%`;
+                anoutput.innerText = `Больше нормы. (${lower_hcg_by_day.get(diff)} - ${upper_hcg_by_day.get(diff)}, медиана ${median_hcg_by_day.get(diff)}). ` + (!isNaN(rel_diff) ? `Должно быть ${prediction}, отклонение ${rel_diff}%` : ``);
             }
         }
     }
@@ -282,12 +286,17 @@ function calculate() {
     let anoutp3 = document.getElementById("anoutp_3");
     let anoutp4 = document.getElementById("anoutp_4");
     let anoutp5 = document.getElementById("anoutp_5");
+    let date_outp1 = document.getElementById("date_outp_1");
+    let date_outp2 = document.getElementById("date_outp_2");
+    let date_outp3 = document.getElementById("date_outp_3");
+    let date_outp4 = document.getElementById("date_outp_4");
+    let date_outp5 = document.getElementById("date_outp_5");
 
-    output_plain(hcg1, date_1, conception_date, anoutp1);
-    output_prediction(hcg2, date_2, conception_date, anoutp2, hcg1, date_1);
-    output_prediction(hcg3, date_3, conception_date, anoutp3, hcg2, date_2);
-    output_prediction(hcg4, date_4, conception_date, anoutp4, hcg3, date_3);
-    output_prediction(hcg5, date_5, conception_date, anoutp5, hcg4, date_4);
+    output_plain(hcg1, date_1, conception_date, anoutp1, date_outp1);
+    output_prediction(hcg2, date_2, conception_date, anoutp2, date_outp2, hcg1, date_1);
+    output_prediction(hcg3, date_3, conception_date, anoutp3, date_outp3, hcg2, date_2);
+    output_prediction(hcg4, date_4, conception_date, anoutp4, date_outp4, hcg3, date_3);
+    output_prediction(hcg5, date_5, conception_date, anoutp5, date_outp5, hcg4, date_4);
 }
 
 // Get the input field
