@@ -173,7 +173,7 @@ input[type="button"]:active {
     touch-action: none;
 }
 
-.data-field-wrapper:last-of-type .delete_button[type="button"] {
+.data_field_wrapper:last-of-type .delete_button[type="button"] {
     display: block;
     
 }
