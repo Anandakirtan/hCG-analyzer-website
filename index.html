@@ -7,7 +7,7 @@
 
     <BODY class="container">
         <div id="wrapper">
-            <div class="conception_wrapper">
+            <div id="conception_wrapper">
                 <div class="conception_bar">
                     <div class="conception_input">
                         <p class=conception_title>Дата последней менструации</p>
@@ -29,13 +29,16 @@
                 </div>
             </div>
             <div id="analizy_wrapper">
-                <input type="button" id="send" onclick=calculate() value="Посчитать" onkeypress="return enterPressHopefully(event)">
-                <div class="analiz_output">
+                <!--<div class="analiz_output">
                     <p id="approximation_output"></p>
-                </div>
+                </div>-->
                 <div id="actual_analizy_wrapper">
+
                 </div>
-                <input type="button" id="add_button" onclick=add_data_field() value="Добавить анализ">
+                <div id="button_bar">
+                    <input type="button" id="add_button" onclick=add_data_field() value="Добавить анализ">
+                    <input type="button" id="send" onclick=calculate() value="Посчитать" onkeypress="return enterPressHopefully(event)">
+                </div>
             </div>
         </div>
     </BODY>

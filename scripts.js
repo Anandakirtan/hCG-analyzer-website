@@ -212,62 +212,12 @@ function get_conception_date() {
     let menstr_date = new Date(pdpm_input);
     conc_diff = Math.round((today-conception_date)/(1000*60*60*24));
     menstr_diff = Math.round((today-menstr_date)/(1000*60*60*24));
-    conception_diff_outp.innerText = `Сегодня со дня зачатия прошло ${conc_diff - 1} дней`;
+    conception_diff_outp.innerText = `Со дня зачатия прошло ${conc_diff - 1} дней`;
     if (!isNaN(menstr_diff)) {
-        menstr_diff_outp.innerText = `Сегодня со дня последней менструации прошло ${menstr_diff - 1} дней`;
+        menstr_diff_outp.innerText = `Со дня последней менструации прошло ${menstr_diff - 1} дней`;
     }
     conception_date.setHours(0,0,0,0)
     return conception_date;
-}
-
-function output_plain(hcg, date, conception_date, anoutput, date_output){
-    let diff = Math.round((date - conception_date)/(1000*60*60*24));
-    if (!isNaN(hcg) && !isNaN(diff)){
-        date_output.innerText = `${diff}`;
-        date_output.title = `Дней со дня зачатия`;
-        if (!isNaN(diff) && !median_hcg_by_day.has(diff)){
-            anoutput.innerText = `Нет табличных данных (со дня зачатия прошло ${diff} дней)`;
-            return;
-        }
-        if (hcg >= lower_hcg_by_day.get(diff) && hcg <= upper_hcg_by_day.get(diff)) {
-            anoutput.innerText = `В норме. (${lower_hcg_by_day.get(diff)} - ${upper_hcg_by_day.get(diff)}, медиана ${median_hcg_by_day.get(diff)})`;
-        }
-        else {
-            if (hcg < lower_hcg_by_day.get(diff)) {
-                anoutput.innerText = `Меньше нормы. (${lower_hcg_by_day.get(diff)} - ${upper_hcg_by_day.get(diff)}, медиана ${median_hcg_by_day.get(diff)})`;
-            }
-            if (hcg > upper_hcg_by_day.get(diff)) {
-                anoutput.innerText = `Больше нормы. (${lower_hcg_by_day.get(diff)} - ${upper_hcg_by_day.get(diff)}, медиана ${median_hcg_by_day.get(diff)})`;
-            }
-        }
-    }
-}
-
-function output_prediction(hcg, date, conception_date, anoutput, date_output, prev_hcg, prev_date){
-    let diff = Math.round((date - conception_date)/(1000*60*60*24));
-    let prev_diff = Math.round((prev_date - conception_date)/(1000*60*60*24));
-    let pred_coef = Math.round(median_hcg_by_day.get(diff) / median_hcg_by_day.get(prev_diff));
-    let prediction = prev_hcg * pred_coef;
-    let rel_diff = Math.round((hcg - prediction) / (prediction) * 100);
-    if (!isNaN(hcg) && !isNaN(diff)){
-        date_output.innerText = `${diff}`;
-        date_output.title = `Дней со дня зачатия`;
-        if (!isNaN(diff) && !median_hcg_by_day.has(diff)){
-            anoutput.innerText = `Нет табличных данных (со дня зачатия прошло ${diff} дней)`;
-            return;
-        }
-        if (hcg >= lower_hcg_by_day.get(diff) && hcg <= upper_hcg_by_day.get(diff)) {
-            anoutput.innerText = `В норме. (${lower_hcg_by_day.get(diff)} - ${upper_hcg_by_day.get(diff)}, медиана ${median_hcg_by_day.get(diff)}). ` + (!isNaN(rel_diff) ? `Должно быть ${prediction}, отклонение ${rel_diff}%` : ``);
-        }
-        else {
-            if (hcg < lower_hcg_by_day.get(diff)) {
-                anoutput.innerText = `Меньше нормы. (${lower_hcg_by_day.get(diff)} - ${upper_hcg_by_day.get(diff)}, медиана ${median_hcg_by_day.get(diff)}). `  + (!isNaN(rel_diff) ? `Должно быть ${prediction}, отклонение ${rel_diff}%` : ``);
-            }
-            if (hcg > upper_hcg_by_day.get(diff)) {
-                anoutput.innerText = `Больше нормы. (${lower_hcg_by_day.get(diff)} - ${upper_hcg_by_day.get(diff)}, медиана ${median_hcg_by_day.get(diff)}). ` + (!isNaN(rel_diff) ? `Должно быть ${prediction}, отклонение ${rel_diff}%` : ``);
-            }
-        }
-    }
 }
 
 var data_fields = []
@@ -330,21 +280,37 @@ function calculate() {
 function get_new_data_field_html(id) {
     // create new DataField to the analizy_wrapper
     return (`<div class="analyze_bar">\n` + 
-    `<input type="value" class="analizy_values" id="hcg_${id}" placeholder="Анализ ${id}">\n` + 
-    `<input type="date" class="analizy" id="analyz_date_${id}" placeholder="Дата анализа ${id}">\n` +
-    `<div class="analiz_output">\n` +
-        `<p class="date_output" id="date_outp_${id}"></p>\n` +
-        `<p id="anoutp_${id}"></p>\n` +
-    `</div>\n</div>\n`);
+        `<input type="value" class="analizy_values" id="hcg_${id}" placeholder="ХГЧ ${id}">\n` + 
+        `<input type="date" class="analizy" id="analyz_date_${id}" placeholder="Дата анализа ${id}">\n` +
+        `<div class="analiz_output">\n` +
+            `<p class="date_output" id="date_outp_${id}"></p>\n` +
+            `<p id="anoutp_${id}"></p>\n` +
+        `</div>\n` +
+        `<div><input type="button" class="delete_button" onclick=delete_data_field() value="х"></div>` + 
+    `</div>\n`);
 }
   
 function add_data_field() {
     const wrapper = document.getElementById('actual_analizy_wrapper');
+    const data_field_wrapper = document.createElement('div');
+    data_field_wrapper.classList.add('data_field_wrapper');
     const id = wrapper.childElementCount + 1;
+    data_field_wrapper.id = `data_field_wrapper_${id}`;
     const data_field_html = get_new_data_field_html(id);
-    wrapper.innerHTML += data_field_html;
+    data_field_wrapper.innerHTML = data_field_html;
+    wrapper.appendChild(data_field_wrapper);
     data_fields.push(new DataField(id))
-  }
+}
+
+function delete_data_field(){
+    const wrapper = document.getElementById('actual_analizy_wrapper');
+    const to_delete_data_field = document.getElementById(`data_field_wrapper_${data_fields[data_fields.length - 1].id}`);
+    wrapper.removeChild(to_delete_data_field);
+    data_fields.pop();
+}
+
+add_data_field()
+add_data_field()
 
 // Get the input field
 var input = document.getElementById("wrapper");
