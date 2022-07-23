@@ -28,53 +28,17 @@
                     </div>
                 </div>
             </div>
-            <div class="analizy_wrapper">
+            <div id="analizy_wrapper">
                 <input type="button" id="send" onclick=calculate() value="Посчитать" onkeypress="return enterPressHopefully(event)">
                 <div class="analiz_output">
                     <p id="approximation_output"></p>
                 </div>
-                <div class="analyze_bar">
-                    <input type="value" class="analizy_values" id="hcg_1" placeholder="Анализ 1">
-                    <input type="date" class="analizy" id="analyz_date_1" placeholder="Дата анализа 1">
-                    <div class="analiz_output">
-                        <p class="date_output" id="date_outp_1"></p>
-                        <p id="anoutp_1"></p>
-                    </div>
+                <div id="actual_analizy_wrapper">
                 </div>
-                <div class="analyze_bar">
-                    <input type="value" class="analizy_values" id="hcg_2" placeholder="Анализ 2">
-                    <input type="date" class="analizy" id="analyz_date_2" placeholder="Дата анализа 2">
-                    <div class="analiz_output">
-                        <p class="date_output" id="date_outp_2"></p>
-                        <p id="anoutp_2"></p>
-                    </div>
-                </div>
-                <div class="analyze_bar">
-                    <input type="value" class="analizy_values" id="hcg_3" placeholder="Анализ 3">
-                    <input type="date" class="analizy" id="analyz_date_3" placeholder="Дата анализа 3">
-                    <div class="analiz_output">
-                        <p class="date_output" id="date_outp_3"></p>
-                        <p id="anoutp_3"></p>
-                    </div>
-                </div>
-                <div class="analyze_bar">
-                    <input type="value" class="analizy_values" id="hcg_4" placeholder="Анализ 4">
-                    <input type="date" class="analizy" id="analyz_date_4" placeholder="Дата анализа 4">
-                    <div class="analiz_output">
-                        <p class="date_output" id="date_outp_4"></p>
-                        <p id="anoutp_4"></p>
-                    </div>
-                </div>
-                <div class="analyze_bar">
-                    <input type="value" class="analizy_values" id="hcg_5" placeholder="Анализ 5">
-                    <input type="date" class="analizy" id="analyz_date_5" placeholder="Дата анализа 5">
-                    <div class="analiz_output">
-                        <p class="date_output" id="date_outp_5"></p>
-                        <p id="anoutp_5"></p>
-                    </div>
-                </div>
+                <input type="button" id="add_button" onclick=add_data_field() value="Добавить анализ">
             </div>
         </div>
     </BODY>
-    <script src="scipts.js"></script>
+    <!--<script src="constants.js" type="module"></script>-->
+    <script src="scripts.js"></script>
 </HTML>

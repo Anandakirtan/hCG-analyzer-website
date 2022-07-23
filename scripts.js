@@ -1,3 +1,5 @@
+//import {lower_hcg_by_day, upper_hcg_by_day, median_hcg_by_day} from "./constants.js"
+
 var lower_hcg_by_day = new Map([
     [7, 2],
     [8, 3],
@@ -180,7 +182,6 @@ function get_conception_date() {
     let conception_input = document.getElementById("conception_date").value;
     let cycle_length_input = document.getElementById("cycle_length").value;
     let today = new Date();
-    let conception_date;
     let conception_diff_outp = document.getElementById("conception_diff");
     let menstr_diff_outp = document.getElementById("menstr_diff");
 
@@ -215,7 +216,7 @@ function get_conception_date() {
     if (!isNaN(menstr_diff)) {
         menstr_diff_outp.innerText = `Сегодня со дня последней менструации прошло ${menstr_diff - 1} дней`;
     }
-
+    conception_date.setHours(0,0,0,0)
     return conception_date;
 }
 
@@ -269,35 +270,81 @@ function output_prediction(hcg, date, conception_date, anoutput, date_output, pr
     }
 }
 
+var data_fields = []
+var conception_date
+
+class DataField {
+    value;
+    date;
+    constructor(id) {
+      this.id = id
+      this.value = 0;
+      this.date = new Date();
+    }
+
+    get_data(){
+        this.value = document.getElementById(`hcg_${this.id}`).value;
+        this.date = new Date(document.getElementById(`analyz_date_${this.id}`).value);
+    }
+
+    output(prev_date, prev_value) {
+        this.get_data();
+        let gest_age = Math.round((this.date - conception_date)/(1000*60*60*24));
+        let prev_gest_age = Math.round((prev_date - conception_date)/(1000*60*60*24));
+        let pred_coef = Math.round(median_hcg_by_day.get(gest_age) / median_hcg_by_day.get(prev_gest_age));
+        let prediction = prev_value * pred_coef;
+        let rel_diff = Math.round((this.value - prediction) / (prediction) * 100);
+        let anoutput = document.getElementById(`anoutp_${this.id}`);
+        let date_output = document.getElementById(`date_outp_${this.id}`); 
+
+        console.log(this.date, conception_date, (this.date - conception_date), (this.date - conception_date)/(1000*60*60*24), Math.round((this.date - conception_date)/(1000*60*60*24)))
+        if (!isNaN(this.value) && !isNaN(gest_age)){
+            date_output.innerText = `${gest_age}`;
+            date_output.title = `Дней со дня зачатия`;
+            if (!isNaN(gest_age) && !median_hcg_by_day.has(gest_age)){
+                return `Нет табличных данных (со дня зачатия прошло ${gest_age} дней)`;
+            }
+            if (this.value >= lower_hcg_by_day.get(gest_age) && this.value <= upper_hcg_by_day.get(gest_age)) {
+                anoutput.innerText = `В норме. (${lower_hcg_by_day.get(gest_age)} - ${upper_hcg_by_day.get(gest_age)}, медиана ${median_hcg_by_day.get(gest_age)}). ` + (!isNaN(rel_diff) ? `Должно быть ${prediction}, отклонение ${rel_diff}%` : ``);
+            }
+            else {
+                if (this.value < lower_hcg_by_day.get(gest_age)) {
+                    anoutput.innerText = `Меньше нормы. (${lower_hcg_by_day.get(gest_age)} - ${upper_hcg_by_day.get(gest_age)}, медиана ${median_hcg_by_day.get(gest_age)}). `  + (!isNaN(rel_diff) ? `Должно быть ${prediction}, отклонение ${rel_diff}%` : ``);
+                }
+                if (this.value > upper_hcg_by_day.get(gest_age)) {
+                    anoutput.innerText = `Больше нормы. (${lower_hcg_by_day.get(gest_age)} - ${upper_hcg_by_day.get(gest_age)}, медиана ${median_hcg_by_day.get(gest_age)}). ` + (!isNaN(rel_diff) ? `Должно быть ${prediction}, отклонение ${rel_diff}%` : ``);
+                }
+            }
+        }
+    }
+  }
+
 function calculate() {
     conception_date = get_conception_date();
-    let hcg1 = document.getElementById("hcg_1").value;
-    let hcg2 = document.getElementById("hcg_2").value;
-    let hcg3 = document.getElementById("hcg_3").value;
-    let hcg4 = document.getElementById("hcg_4").value;
-    let hcg5 = document.getElementById("hcg_5").value;
-    let date_1 = new Date(document.getElementById("analyz_date_1").value);
-    let date_2 = new Date(document.getElementById("analyz_date_2").value);
-    let date_3 = new Date(document.getElementById("analyz_date_3").value);
-    let date_4 = new Date(document.getElementById("analyz_date_4").value);
-    let date_5 = new Date(document.getElementById("analyz_date_5").value);
-    let anoutp1 = document.getElementById("anoutp_1");
-    let anoutp2 = document.getElementById("anoutp_2");
-    let anoutp3 = document.getElementById("anoutp_3");
-    let anoutp4 = document.getElementById("anoutp_4");
-    let anoutp5 = document.getElementById("anoutp_5");
-    let date_outp1 = document.getElementById("date_outp_1");
-    let date_outp2 = document.getElementById("date_outp_2");
-    let date_outp3 = document.getElementById("date_outp_3");
-    let date_outp4 = document.getElementById("date_outp_4");
-    let date_outp5 = document.getElementById("date_outp_5");
-
-    output_plain(hcg1, date_1, conception_date, anoutp1, date_outp1);
-    output_prediction(hcg2, date_2, conception_date, anoutp2, date_outp2, hcg1, date_1);
-    output_prediction(hcg3, date_3, conception_date, anoutp3, date_outp3, hcg2, date_2);
-    output_prediction(hcg4, date_4, conception_date, anoutp4, date_outp4, hcg3, date_3);
-    output_prediction(hcg5, date_5, conception_date, anoutp5, date_outp5, hcg4, date_4);
+    data_fields[0].output(NaN, NaN);
+    for (let i = 1; i < data_fields.length; i++){
+        data_fields[i].output(data_fields[i - 1].date, data_fields[i - 1].value);
+    }
 }
+
+function get_new_data_field_html(id) {
+    // create new DataField to the analizy_wrapper
+    return (`<div class="analyze_bar">\n` + 
+    `<input type="value" class="analizy_values" id="hcg_${id}" placeholder="Анализ ${id}">\n` + 
+    `<input type="date" class="analizy" id="analyz_date_${id}" placeholder="Дата анализа ${id}">\n` +
+    `<div class="analiz_output">\n` +
+        `<p class="date_output" id="date_outp_${id}"></p>\n` +
+        `<p id="anoutp_${id}"></p>\n` +
+    `</div>\n</div>\n`);
+}
+  
+function add_data_field() {
+    const wrapper = document.getElementById('actual_analizy_wrapper');
+    const id = wrapper.childElementCount + 1;
+    const data_field_html = get_new_data_field_html(id);
+    wrapper.innerHTML += data_field_html;
+    data_fields.push(new DataField(id))
+  }
 
 // Get the input field
 var input = document.getElementById("wrapper");
