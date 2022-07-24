@@ -53,6 +53,7 @@ body {
 }
 
 .analyze_bar{
+    height: 70px;
     /*width: 100%;*/
     display: flex;
     margin: 14px 30px;
@@ -71,7 +72,54 @@ input {
 
 input[type="date"] {
     padding-left: 7px;
+    margin-right: 10px;
     width: 260px;
+}
+
+#analyze_header_spacer{
+    height: 100%;
+    width: 470px;
+}
+
+.output_cell{
+    margin: 10px 0;
+    height: 100%;
+    padding: 0 10px;
+    text-align: center;
+    line-height: 70px;
+    border-left: 2px solid black;
+}
+
+.column_header{
+    font-size: 24px;
+}
+
+.column_header.prediction_cell{
+    font-size: 22px;
+}
+
+.column_cell{
+    padding: 0 10px;
+    font-size: 20px;
+    text-align: center;
+    border-left: 1px solid black;
+}
+
+.gest_age_cell{
+    border-left: none;
+    width: 80px;
+}
+
+.is_normal_cell{
+    width: 100px;
+}
+
+.norm_cell{
+    width: 200px;
+}
+
+.prediction_cell{
+    width: 300px;
 }
 
 #output_wrapper {
@@ -115,7 +163,7 @@ input[type="date"] {
 }
 
 #button_bar{
-    padding: 10px 25px;
+    padding: 10px 35px;
     width: 100%;
     position: fixed;
     text-align: left;
@@ -145,16 +193,16 @@ input[type="button"]:active {
     transform: translateY(2px);
 }
 
-#send {
-    width: 200px;
-    background-color: rgb(0, 63, 105);
-}
-
 #add_button {
     width: 300px;
     margin-right: 20px;
     position: relative;
     background-color: rgb(0, 95, 71);
+}
+
+#send {
+    width: 200px;
+    background-color: rgb(0, 63, 105);
 }
 
 .delete_button[type="button"]{
@@ -175,7 +223,6 @@ input[type="button"]:active {
 
 .data_field_wrapper:last-of-type .delete_button[type="button"] {
     display: block;
-    
 }
 
 @import url(https://fonts.googleapis.com/css?family=Righteous);

@@ -29,11 +29,14 @@
                 </div>
             </div>
             <div id="analizy_wrapper">
-                <!--<div class="analiz_output">
-                    <p id="approximation_output"></p>
-                </div>-->
                 <div id="actual_analizy_wrapper">
-
+                    <div class="analyze_bar" id="analyze_header">
+                        <div id="analyze_header_spacer"></div>
+                        <p class="output_cell column_header gest_age_cell">Срок</p>
+                        <p class="output_cell column_header is_normal_cell">В норме?</p>
+                        <p class="output_cell column_header norm_cell">Норма (медиана)</p>
+                        <p class="output_cell column_header prediction_cell">По предыдущему (отклонение)</p>
+                    </div>
                 </div>
                 <div id="button_bar">
                     <input type="button" id="add_button" onclick=add_data_field() value="Добавить анализ">

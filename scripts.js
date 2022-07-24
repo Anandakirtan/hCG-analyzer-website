@@ -235,36 +235,57 @@ class DataField {
     get_data(){
         this.value = document.getElementById(`hcg_${this.id}`).value;
         this.date = new Date(document.getElementById(`analyz_date_${this.id}`).value);
+        this.gest_age = Math.round((this.date - conception_date)/(1000*60*60*24));
+    }
+
+    output_gest_age(){            
+        let gest_age_output = document.getElementById(`gest_age_outp_${this.id}`); 
+        gest_age_output.innerText = `${this.gest_age}`;
+    }
+
+    output_is_norm() {
+        let is_norm_output = document.getElementById(`is_normal_outp_${this.id}`);
+        if (this.value >= lower_hcg_by_day.get(this.gest_age) && this.value <= upper_hcg_by_day.get(this.gest_age)) {
+            is_norm_output.innerText = `Да`;
+        }
+        else {
+            if (this.value < lower_hcg_by_day.get(this.gest_age)) {
+                is_norm_output.innerText = `Меньше`; 
+            }
+            if (this.value > upper_hcg_by_day.get(this.gest_age)) {
+                is_norm_output.innerText = `Больше`; 
+            }
+        }
+    }
+
+    output_norm(){
+        let norm_output = document.getElementById(`norm_outp_${this.id}`);
+        if (!isNaN(this.gest_age) && !median_hcg_by_day.has(this.gest_age)){
+            norm_output.innerText `Нет табличных данных (со дня зачатия прошло ${gest_age} дней)`;
+        }
+        else{
+            norm_output.innerText = `${lower_hcg_by_day.get(this.gest_age)} - ${upper_hcg_by_day.get(this.gest_age)} (${median_hcg_by_day.get(this.gest_age)})`;
+        }
+    }
+
+    output_prediction(prev_date, prev_value){
+        let prediction_output = document.getElementById(`prediction_outp_${this.id}`);
+        let prev_gest_age = Math.round((prev_date - conception_date)/(1000*60*60*24));
+        let pred_coef = Math.round(median_hcg_by_day.get(this.gest_age) / median_hcg_by_day.get(prev_gest_age));
+        let prediction = prev_value * pred_coef;
+        let rel_diff = Math.round((this.value - prediction) / (prediction) * 100);
+        prediction_output.innerText = (!isNaN(rel_diff) ? ` ${prediction} (${rel_diff}%)` : ``);
     }
 
     output(prev_date, prev_value) {
         this.get_data();
-        let gest_age = Math.round((this.date - conception_date)/(1000*60*60*24));
-        let prev_gest_age = Math.round((prev_date - conception_date)/(1000*60*60*24));
-        let pred_coef = Math.round(median_hcg_by_day.get(gest_age) / median_hcg_by_day.get(prev_gest_age));
-        let prediction = prev_value * pred_coef;
-        let rel_diff = Math.round((this.value - prediction) / (prediction) * 100);
-        let anoutput = document.getElementById(`anoutp_${this.id}`);
-        let date_output = document.getElementById(`date_outp_${this.id}`); 
 
         console.log(this.date, conception_date, (this.date - conception_date), (this.date - conception_date)/(1000*60*60*24), Math.round((this.date - conception_date)/(1000*60*60*24)))
-        if (!isNaN(this.value) && !isNaN(gest_age)){
-            date_output.innerText = `${gest_age}`;
-            date_output.title = `Дней со дня зачатия`;
-            if (!isNaN(gest_age) && !median_hcg_by_day.has(gest_age)){
-                return `Нет табличных данных (со дня зачатия прошло ${gest_age} дней)`;
-            }
-            if (this.value >= lower_hcg_by_day.get(gest_age) && this.value <= upper_hcg_by_day.get(gest_age)) {
-                anoutput.innerText = `В норме. (${lower_hcg_by_day.get(gest_age)} - ${upper_hcg_by_day.get(gest_age)}, медиана ${median_hcg_by_day.get(gest_age)}). ` + (!isNaN(rel_diff) ? `Должно быть ${prediction}, отклонение ${rel_diff}%` : ``);
-            }
-            else {
-                if (this.value < lower_hcg_by_day.get(gest_age)) {
-                    anoutput.innerText = `Меньше нормы. (${lower_hcg_by_day.get(gest_age)} - ${upper_hcg_by_day.get(gest_age)}, медиана ${median_hcg_by_day.get(gest_age)}). `  + (!isNaN(rel_diff) ? `Должно быть ${prediction}, отклонение ${rel_diff}%` : ``);
-                }
-                if (this.value > upper_hcg_by_day.get(gest_age)) {
-                    anoutput.innerText = `Больше нормы. (${lower_hcg_by_day.get(gest_age)} - ${upper_hcg_by_day.get(gest_age)}, медиана ${median_hcg_by_day.get(gest_age)}). ` + (!isNaN(rel_diff) ? `Должно быть ${prediction}, отклонение ${rel_diff}%` : ``);
-                }
-            }
+        if (!isNaN(this.value) && !isNaN(this.gest_age)){
+            this.output_gest_age()
+            this.output_is_norm()
+            this.output_norm()
+            this.output_prediction(prev_date, prev_value)
         }
     }
   }
@@ -283,10 +304,12 @@ function get_new_data_field_html(id) {
         `<input type="value" class="analizy_values" id="hcg_${id}" placeholder="ХГЧ ${id}">\n` + 
         `<input type="date" class="analizy" id="analyz_date_${id}" placeholder="Дата анализа ${id}">\n` +
         `<div class="analiz_output">\n` +
-            `<p class="date_output" id="date_outp_${id}"></p>\n` +
-            `<p id="anoutp_${id}"></p>\n` +
+            `<p class="column_cell gest_age_cell" id="gest_age_outp_${id}"></p>\n` +
+            `<p class="column_cell is_normal_cell" id="is_normal_outp_${id}"></p>\n` +
+            `<p class="column_cell norm_cell" id="norm_outp_${id}"></p>\n` +
+            `<p class="column_cell prediction_cell" id="prediction_outp_${id}"></p>\n` +
         `</div>\n` +
-        `<div><input type="button" class="delete_button" onclick=delete_data_field() value="х"></div>` + 
+        `<input type="button" class="delete_button" onclick=delete_data_field() value="х">` + 
     `</div>\n`);
 }
   
@@ -294,7 +317,7 @@ function add_data_field() {
     const wrapper = document.getElementById('actual_analizy_wrapper');
     const data_field_wrapper = document.createElement('div');
     data_field_wrapper.classList.add('data_field_wrapper');
-    const id = wrapper.childElementCount + 1;
+    const id = wrapper.childElementCount;
     data_field_wrapper.id = `data_field_wrapper_${id}`;
     const data_field_html = get_new_data_field_html(id);
     data_field_wrapper.innerHTML = data_field_html;
