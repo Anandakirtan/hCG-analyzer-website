@@ -1,12 +1,45 @@
-# React + Vite
+# hCG Analyzer (React Version)
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A modern React-based website for analyzing hCG test results. It uses conception date (which can be calculated using the last menstruation date) and hCG scores to determine if the values are within normal ranges.
 
-Currently, two official plugins are available:
+## Features
+- Calculate conception date based on last menstruation date
+- Track and analyze hCG test results
+- Compare results with normal ranges
+- Calculate deviations from expected values
+- Modern, responsive interface
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## Live Demo
+Available [here](https://anandakirtan.github.io/hCG-analyzer-website)
 
-## Expanding the ESLint configuration
+## Development
 
-If you are developing a production application, we recommend using TypeScript and enable type-aware lint rules. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+### Prerequisites
+- Node.js (v14 or higher)
+- npm (comes with Node.js)
+
+### Installation
+1. Clone the repository:
+```bash
+git clone https://github.com/anandakirtan/hCG-analyzer-website.git
+cd hcg-analyzer-react
+```
+
+2. Install dependencies:
+```bash
+npm install
+```
+
+3. Start development server:
+```bash
+npm run dev
+```
+
+### Deployment
+To deploy to GitHub Pages:
+```bash
+npm run deploy
+```
+
+## License
+This project is open source and available under the MIT License.
