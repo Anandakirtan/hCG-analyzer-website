@@ -10,7 +10,9 @@ A modern React-based website for analyzing hCG test results. It uses conception 
 - Modern, responsive interface
 
 ## Live Demo
-Available [here](https://anandakirtan.github.io/hCG-analyzer-website)
+React Version available [here](https://anandakirtan.github.io/hCG-analyzer-website-react)
+
+Original Version available [here](https://anandakirtan.github.io/hCG-analyzer-website/index)
 
 ## Development
 
