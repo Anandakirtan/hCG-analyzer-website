@@ -1,4 +1,4 @@
-//import {lower_hcg_by_day, upper_hcg_by_day, median_hcg_by_day} from "./constants.js"
+// import { lower_hcg_by_day, upper_hcg_by_day, median_hcg_by_day } from "./constants.mjs"
 
 var lower_hcg_by_day = new Map([
     [7, 2],
@@ -171,6 +171,17 @@ for (let i = 77; i <= 84; ++i) {
     median_hcg_by_day.set(i, 45000);
 }
 
+var kAluminum = 'Алюминий';
+var kBoron = 'Бор';
+
+types = [kAluminum, kBoron]
+
+var healthy_blood_ranges = new Map([
+    [kAluminum, [2.0, 390.0]],
+    [kBoron, [6.0, 100.0]],
+    // ...
+]);
+
 Date.prototype.addDays = function(days) {
     var date = new Date(this.valueOf());
     date.setDate(date.getDate() + days);
@@ -223,7 +234,7 @@ function get_conception_date() {
 var data_fields = []
 var conception_date
 
-class DataField {
+class HcgDataField {
     value;
     date;
     constructor(id) {
@@ -290,6 +301,41 @@ class DataField {
     }
   }
 
+  class BloodDataField {
+    type;
+    value;
+    constructor(id) {
+      this.id = id;
+      this.value = 0;
+      type = null;
+    }
+
+    get_data(){
+        this.type = document.getElementById(`blood_${this.id}`).type;
+        this.value = document.getElementById(`blood_${this.id}`).value;
+    }
+
+    output_diff() {
+        let healthy_range = healthy_blood_ranges.get(this.type);
+        let diff_coef = 0;
+
+        if (this.value < healthy_range[0]){
+            diff_coef = (this.value - healthy_range[0]) / healthy_range[0];
+        }
+        else {
+            if (this.value > healthy_range[1]){
+                diff_coef = (this.value - healthy_range[1]) / healthy_range[1];
+            }
+            else {
+                diff_coef = (this.value - healthy_range[0]) / (healthy_range[1] - healthy_range[0]);
+            }
+        }
+
+        let diff_output = document.getElementById(`diff_output_${this.id}`);
+        diff_output.innerText = (diff_coef * 100).toString() + `%`;
+    }
+  }
+
 function calculate() {
     conception_date = get_conception_date();
     data_fields[0].output(NaN, NaN);
@@ -298,23 +344,34 @@ function calculate() {
     }
 }
 
-function get_new_data_field_html(id) {
+function get_new_data_field_html(type, id) {
     // create new DataField to the analizy_wrapper
-    return (`<div class="analyze_bar">\n` + 
-        `<input type="value" class="analizy_values" id="hcg_${id}" placeholder="ХГЧ ${id}">\n` + 
-        `<input type="date" class="analizy" id="analyz_date_${id}" placeholder="Дата анализа ${id}">\n` +
-        `<div class="analiz_output">\n` +
-            `<p class="column_cell gest_age_cell" id="gest_age_outp_${id}"></p>\n` +
-            `<p class="column_cell is_normal_cell" id="is_normal_outp_${id}"></p>\n` +
-            `<p class="column_cell norm_cell" id="norm_outp_${id}"></p>\n` +
-            `<p class="column_cell prediction_cell" id="prediction_outp_${id}"></p>\n` +
-        `</div>\n` +
-        `<input type="button" class="delete_button" onclick=delete_data_field() value="х">` + 
-    `</div>\n`);
+    if (type == 'hcg') {
+        return (`<div class="analyze_bar">\n` + 
+            `<input type="value" class="hcg_analizy_values" id="hcg_${id}" placeholder="ХГЧ ${id}">\n` + 
+            `<input type="date" class="analizy" id="analyz_date_${id}" placeholder="Дата анализа ${id}">\n` +
+            `<div class="analiz_output">\n` +
+                `<p class="column_cell gest_age_cell" id="gest_age_outp_${id}"></p>\n` +
+                `<p class="column_cell norm_cell" id="norm_outp_${id}"></p>\n` +
+                `<p class="column_cell is_normal_cell" id="is_normal_outp_${id}"></p>\n` +
+                `<p class="column_cell prediction_cell" id="prediction_outp_${id}"></p>\n` +
+            `</div>\n` +
+            `<input type="button" class="delete_button" onclick=delete_data_field() value="х">` + 
+        `</div>\n`);
+    }
+    if (type == 'blood') {
+        return (`<div class="analyze_bar">\n` + 
+            `<input type="value" class="blood_analizy_values" id="hcg_${id}" placeholder="Значение">\n` + 
+            `<div class="analiz_output">\n` +
+                `<p class="column_cell diff_output_cell" id="diff_output_${id}"></p>\n` +
+            `</div>\n` +
+            `<input type="button" class="delete_button" onclick=delete_data_field() value="х">` + 
+        `</div>\n`);
+    }
 }
   
-function add_data_field() {
-    const wrapper = document.getElementById('actual_analizy_wrapper');
+function add_data_field(type) {
+    const wrapper = document.getElementById(`actual_${type}_analizy_wrapper`);
     const data_field_wrapper = document.createElement('div');
     data_field_wrapper.classList.add('data_field_wrapper');
     const id = wrapper.childElementCount;
@@ -322,7 +379,7 @@ function add_data_field() {
     const data_field_html = get_new_data_field_html(id);
     data_field_wrapper.innerHTML = data_field_html;
     wrapper.appendChild(data_field_wrapper);
-    data_fields.push(new DataField(id))
+    data_fields.push(new HcgDataField(id))
 }
 
 function delete_data_field(){
@@ -332,7 +389,6 @@ function delete_data_field(){
     data_fields.pop();
 }
 
-add_data_field()
 add_data_field()
 
 // Get the input field
