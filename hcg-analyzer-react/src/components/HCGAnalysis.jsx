@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { hcgNorms, hcgMedians } from '../constants/hcg-constants';
+import React, { useState } from 'react';
+import { lower_hcg_by_day, upper_hcg_by_day, median_hcg_by_day } from '../constants/hcg-constants';
 
 const HCGAnalysis = ({ conceptionDate }) => {
   const [analyses, setAnalyses] = useState([]);
@@ -8,17 +8,18 @@ const HCGAnalysis = ({ conceptionDate }) => {
     if (!conceptionDate || !analysisDate) return null;
     const diffTime = Math.abs(analysisDate - conceptionDate);
     const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-    return Math.floor(diffDays / 7);
+    return diffDays;
   };
 
-  const isNormal = (hcg, weeks) => {
-    if (!weeks || weeks < 3 || weeks > 20) return null;
-    const norm = hcgNorms[weeks];
-    return norm ? hcg >= norm.min && hcg <= norm.max : null;
+  const isNormal = (hcg, days) => {
+    if (!days || days < 7 || days > 84) return null;
+    const lower = lower_hcg_by_day[days];
+    const upper = upper_hcg_by_day[days];
+    return lower && upper ? hcg >= lower && hcg <= upper : null;
   };
 
-  const getMedian = (weeks) => {
-    return weeks && hcgMedians[weeks] ? hcgMedians[weeks] : null;
+  const getMedian = (days) => {
+    return days && median_hcg_by_day[days] ? median_hcg_by_day[days] : null;
   };
 
   const calculatePrediction = (currentHCG, prevHCG, daysDiff) => {
@@ -74,7 +75,7 @@ const HCGAnalysis = ({ conceptionDate }) => {
         <div className="analyze_bar" id="analyze_header">
           <div>Дата</div>
           <div>ХГЧ</div>
-          <div>Срок</div>
+          <div>Срок (дни)</div>
           <div>В норме?</div>
           <div>Норма (медиана)</div>
           <div>По предыдущему (отклонение)</div>
@@ -92,7 +93,7 @@ const HCGAnalysis = ({ conceptionDate }) => {
               onChange={(e) => updateAnalysis(index, 'hcg', e.target.value)}
               placeholder="ХГЧ"
             />
-            <div>{analysis.gestationalAge ? `${analysis.gestationalAge} нед.` : '-'}</div>
+            <div>{analysis.gestationalAge ? `${analysis.gestationalAge} дн.` : '-'}</div>
             <div>{analysis.isNormal === null ? '-' : analysis.isNormal ? 'Да' : 'Нет'}</div>
             <div>{analysis.median || '-'}</div>
             <div>{analysis.prediction ? `${analysis.prediction}%` : '-'}</div>
