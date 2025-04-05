@@ -1,4 +1,5 @@
 // import { lower_hcg_by_day, upper_hcg_by_day, median_hcg_by_day } from "./constants.mjs"
+// import { lower_hcg_by_day, upper_hcg_by_day, median_hcg_by_day } from "./hcG-constants.mjs";
 
 var lower_hcg_by_day = new Map([
     [7, 2],
@@ -174,7 +175,7 @@ for (let i = 77; i <= 84; ++i) {
 var kAluminum = 'Алюминий';
 var kBoron = 'Бор';
 
-types = [kAluminum, kBoron]
+var types = [kAluminum, kBoron]
 
 var healthy_blood_ranges = new Map([
     [kAluminum, [2.0, 390.0]],
@@ -272,7 +273,7 @@ class HcgDataField {
     output_norm(){
         let norm_output = document.getElementById(`norm_outp_${this.id}`);
         if (!isNaN(this.gest_age) && !median_hcg_by_day.has(this.gest_age)){
-            norm_output.innerText `Нет табличных данных (со дня зачатия прошло ${gest_age} дней)`;
+            norm_output.innerText = `Нет табличных данных (со дня зачатия прошло ${this.gest_age} дней)`;
         }
         else{
             norm_output.innerText = `${lower_hcg_by_day.get(this.gest_age)} - ${upper_hcg_by_day.get(this.gest_age)} (${median_hcg_by_day.get(this.gest_age)})`;
@@ -356,7 +357,7 @@ function get_new_data_field_html(type, id) {
                 `<p class="column_cell is_normal_cell" id="is_normal_outp_${id}"></p>\n` +
                 `<p class="column_cell prediction_cell" id="prediction_outp_${id}"></p>\n` +
             `</div>\n` +
-            `<input type="button" class="delete_button" onclick=delete_data_field() value="х">` + 
+            `<input type="button" class="delete_button" onclick="delete_data_field(${id})" value="х">` + 
         `</div>\n`);
     }
     if (type == 'blood') {
@@ -365,7 +366,7 @@ function get_new_data_field_html(type, id) {
             `<div class="analiz_output">\n` +
                 `<p class="column_cell diff_output_cell" id="diff_output_${id}"></p>\n` +
             `</div>\n` +
-            `<input type="button" class="delete_button" onclick=delete_data_field() value="х">` + 
+            `<input type="button" class="delete_button" onclick="delete_data_field(${id})" value="х">` + 
         `</div>\n`);
     }
 }
@@ -376,31 +377,47 @@ function add_data_field(type) {
     data_field_wrapper.classList.add('data_field_wrapper');
     const id = wrapper.childElementCount;
     data_field_wrapper.id = `data_field_wrapper_${id}`;
-    const data_field_html = get_new_data_field_html(id);
+    const data_field_html = get_new_data_field_html(type, id);
     data_field_wrapper.innerHTML = data_field_html;
     wrapper.appendChild(data_field_wrapper);
     data_fields.push(new HcgDataField(id))
 }
 
-function delete_data_field(){
-    const wrapper = document.getElementById('actual_analizy_wrapper');
-    const to_delete_data_field = document.getElementById(`data_field_wrapper_${data_fields[data_fields.length - 1].id}`);
-    wrapper.removeChild(to_delete_data_field);
-    data_fields.pop();
+function delete_data_field(id){
+    if (data_fields.length === 0) return; // Don't try to delete if there are no fields
+    
+    const wrapper = document.getElementById('actual_hcg_analizy_wrapper');
+    if (!wrapper) return; // Safety check
+    
+    const to_delete_data_field = document.getElementById(`data_field_wrapper_${id}`);
+    if (to_delete_data_field) {
+        wrapper.removeChild(to_delete_data_field);
+        data_fields.pop();
+    }
 }
 
-add_data_field()
+// Expose functions to global scope
+window.add_data_field = add_data_field;
+window.calculate = calculate;
+window.delete_data_field = delete_data_field;
 
-// Get the input field
-var input = document.getElementById("wrapper");
+// Initialize first data field
+add_data_field('hcg');
 
-// Execute a function when the user releases a key on the keyboard
-input.addEventListener("keyup", function(event) {
-  // Number 13 is the "Enter" key on the keyboard
-  if (event.keyCode === 13) {
-    // Cancel the default action, if needed
-    event.preventDefault();
-    // Trigger the button element with a click
-    document.getElementById("send").click();
-  }
+// Set up event listeners
+document.addEventListener('DOMContentLoaded', () => {
+    const addButton = document.getElementById('add_button');
+    const sendButton = document.getElementById('send');
+    const wrapper = document.getElementById('wrapper');
+
+    addButton.addEventListener('click', () => add_data_field('hcg'));
+    sendButton.addEventListener('click', calculate);
+
+    // Handle Enter key press
+    wrapper.addEventListener('keyup', (event) => {
+        if (event.keyCode === 13) {
+            event.preventDefault();
+            sendButton.click();
+        }
+    });
 });
