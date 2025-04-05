@@ -52,19 +52,24 @@ body {
     flex-direction: column;
 }
 
+#analyze_header{
+    margin-bottom: 30px;
+}
+
 .analyze_bar{
     height: 70px;
     /*width: 100%;*/
     display: flex;
-    margin: 14px 30px;
+    margin-top: 16px;
+    margin-left: 20px;
 }
 
 input {
     display: inline-block;
-    margin: 10px 0;
+    margin: 10px 10px;
     height: 50px;
-    width: 230px;
-    font-size: 34px;
+    width: 200px;
+    font-size: 30px;
     border-radius: 15px;
     outline: none;
     text-align: center;
@@ -73,7 +78,7 @@ input {
 input[type="date"] {
     padding-left: 7px;
     margin-right: 10px;
-    width: 260px;
+    width: 220px;
 }
 
 #analyze_header_spacer{
@@ -86,12 +91,15 @@ input[type="date"] {
     height: 100%;
     padding: 0 10px;
     text-align: center;
-    line-height: 70px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     border-left: 2px solid black;
 }
 
 .column_header{
     font-size: 24px;
+    line-height: 1.2;
 }
 
 .column_header.prediction_cell{

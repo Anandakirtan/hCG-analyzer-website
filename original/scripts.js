@@ -353,8 +353,8 @@ function get_new_data_field_html(type, id) {
             `<input type="date" class="analizy" id="analyz_date_${id}" placeholder="Дата анализа ${id}">\n` +
             `<div class="analiz_output">\n` +
                 `<p class="column_cell gest_age_cell" id="gest_age_outp_${id}"></p>\n` +
-                `<p class="column_cell norm_cell" id="norm_outp_${id}"></p>\n` +
                 `<p class="column_cell is_normal_cell" id="is_normal_outp_${id}"></p>\n` +
+                `<p class="column_cell norm_cell" id="norm_outp_${id}"></p>\n` +
                 `<p class="column_cell prediction_cell" id="prediction_outp_${id}"></p>\n` +
             `</div>\n` +
             `<input type="button" class="delete_button" onclick="delete_data_field(${id})" value="х">` + 
