@@ -124,6 +124,27 @@ input[type="text"] {
   margin-top: 1rem;
 }
 
+#calculate_bar {
+  display: flex;
+  justify-content: center;
+}
+
+.calculate-btn {
+  padding: 0.75rem 2.5rem;
+  font-size: 1.1rem;
+  font-weight: bold;
+  background-color: #28a745;
+  letter-spacing: 0.03em;
+}
+
+.calculate-btn:hover {
+  background-color: #1e7e34;
+}
+
+.calculate-btn:disabled {
+  background-color: #a3d9b1;
+}
+
 button {
   padding: 0.5rem 1rem;
   background-color: #007bff;
