@@ -6,6 +6,7 @@ import {
   getHcgReferenceRange,
   getMinimumTwoDayRise,
 } from '../constants/hcg-constants'
+import HCGChart from './HCGChart'
 
 const MS_PER_DAY = 24 * 60 * 60 * 1000
 const numberFormatter = new Intl.NumberFormat('ru-RU')
@@ -222,6 +223,8 @@ const HCGAnalysis = ({ gestationalStartDate }) => {
           )
         })}
       </div>
+
+      <HCGChart analyses={enriched} gestationalStartDate={gestationalStartDate} />
 
       <div className="methodology">
         <h3>Как читать результат</h3>

@@ -1,8 +1,8 @@
 # hCG analyzer
 
 A small client-side web app for reviewing serial quantitative β-hCG results.
-It estimates gestational age, shows a broad reference range, and normalizes the
-change between dated results to a 48-hour interval.
+It estimates gestational age, plots dated results against a broad reference
+range, and normalizes the change between results to a 48-hour interval.
 
 The project is designed for static hosting on GitHub Pages. No entered medical
 data is sent to a server.

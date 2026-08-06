@@ -329,6 +329,131 @@ input:focus {
   color: #9f3f31;
 }
 
+.chart-section {
+  margin: 0 32px 30px;
+  padding-top: 4px;
+}
+
+.chart-heading {
+  display: flex;
+  justify-content: space-between;
+  gap: 24px;
+  align-items: end;
+  margin-bottom: 16px;
+}
+
+.chart-heading h3 {
+  margin-bottom: 4px;
+  font-size: 1.05rem;
+}
+
+.chart-heading p {
+  margin-bottom: 0;
+  color: var(--muted);
+  font-size: 0.84rem;
+}
+
+.chart-legend {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 16px;
+  color: var(--muted);
+  font-size: 0.8rem;
+}
+
+.chart-legend span {
+  display: inline-flex;
+  gap: 7px;
+  align-items: center;
+}
+
+.chart-legend i {
+  display: inline-block;
+  width: 22px;
+  height: 8px;
+}
+
+.legend-line {
+  border-top: 2px solid var(--brand);
+}
+
+.legend-band {
+  border: 1px solid #a9d4c1;
+  background: rgba(57, 150, 113, 0.16);
+}
+
+.chart-canvas {
+  width: 100%;
+  min-width: 0;
+}
+
+.chart-canvas svg {
+  display: block;
+  width: 100%;
+  height: auto;
+  overflow: visible;
+}
+
+.chart-frame {
+  fill: #fbfdfc;
+  stroke: var(--line);
+  stroke-width: 1;
+}
+
+.chart-grid-line {
+  stroke: #e4ebe8;
+  stroke-width: 1;
+}
+
+.chart-tick {
+  stroke: #aebdb7;
+  stroke-width: 1;
+}
+
+.chart-axis-label,
+.chart-axis-title,
+.chart-value-label {
+  fill: var(--muted);
+  font-family: inherit;
+  font-size: 12px;
+}
+
+.chart-axis-title {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+
+.chart-value-label {
+  fill: var(--brand-dark);
+  font-weight: 700;
+}
+
+.reference-band {
+  fill: rgba(57, 150, 113, 0.14);
+  stroke: rgba(22, 115, 92, 0.35);
+  stroke-width: 1;
+}
+
+.result-line {
+  fill: none;
+  stroke: var(--brand);
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 3;
+}
+
+.result-hit-area {
+  fill: transparent;
+}
+
+.result-point {
+  fill: var(--surface);
+  stroke: var(--brand);
+  stroke-width: 3;
+}
+
 .methodology {
   padding: 28px 32px 30px;
   border-top: 1px solid var(--line);
@@ -387,6 +512,21 @@ input:focus {
 
   .analysis-table {
     overflow-x: auto;
+  }
+
+  .chart-section {
+    margin-right: 20px;
+    margin-left: 20px;
+  }
+
+  .chart-heading {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .chart-legend {
+    justify-content: flex-start;
   }
 }
 
