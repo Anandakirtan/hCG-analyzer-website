@@ -1,56 +1,63 @@
 # hCG analyzer
 
-A website for analyzing hCG test results. It uses conception date (which can be calculated using the last menstruation date) and hCG scores to tell if everything's alright or should scores should be higher or lower.
+A small client-side web app for reviewing serial quantitative β-hCG results.
+It estimates gestational age, shows a broad reference range, and normalizes the
+change between dated results to a 48-hour interval.
 
-Don't understand much about it, just implemented what my mom had always been doing by hand. **She says it saves her a lot of time!**
+The project is designed for static hosting on GitHub Pages. No entered medical
+data is sent to a server.
 
-## Available Versions
+## Important limitation
 
-### Original Version (JavaScript)
-Available [**here**](https://anandakirtan.github.io/hCG-analyzer-website/original)
+This app is an informational calculator, not a diagnostic tool. A single hCG
+result — or a trend calculated from several results — cannot by itself confirm
+pregnancy viability or location. Laboratory reference intervals differ, and
+the result should be interpreted together with symptoms, repeat testing,
+ultrasound, and a clinician's assessment.
 
-### React Version (New!)
-Available [**here**](https://anandakirtan.github.io/hCG-analyzer-website/react)
+The React version uses:
 
-The React version includes a modern UI and improved user experience while maintaining all the functionality of the original version.
+- broad ranges by gestational week from [Cleveland Clinic](https://my.clevelandclinic.org/health/body/22489-human-chorionic-gonadotropin);
+- level-dependent two-day rise estimates from [Barnhart et al. (2016)](https://pubmed.ncbi.nlm.nih.gov/27500326/);
+- the diagnostic caution described by [ACOG](https://www.acog.org/clinical/clinical-guidance/practice-bulletin/articles/2018/11/early-pregnancy-loss).
 
-## Project Structure
-```
-hCG-analyzer-website/
-├── original/           # Original JavaScript version
-├── react/             # Built React version
-├── hcg-analyzer-react/ # React source code
+Always prioritize the reference interval printed by the laboratory that
+performed the test.
+
+## Available versions
+
+- [React version](https://anandakirtan.github.io/hCG-analyzer-website/react/) — current version
+- [Original JavaScript version](https://anandakirtan.github.io/hCG-analyzer-website/original/) — retained for comparison
+
+## Project structure
+
+```text
+hcg-analyzer-website/
+├── original/            # Original JavaScript version
+├── react/               # Production build published by GitHub Pages
+├── hcg-analyzer-react/  # React source
 └── README.md
 ```
 
 ## Development
 
-### Original Version
-The original version is a simple HTML/JavaScript application located in the `original` directory.
-
-### React Version
-The React version is located in the `hcg-analyzer-react` directory. To work on it:
-
-1. Navigate to the React project:
 ```bash
 cd hcg-analyzer-react
-```
-
-2. Install dependencies:
-```bash
-npm install
-```
-
-3. Start development server:
-```bash
+npm ci
 npm run dev
 ```
 
-4. To deploy both versions:
+Quality checks and production build:
+
 ```bash
-cd hcg-analyzer-react
-npm run deploy
+npm run lint
+npm run build
 ```
 
+`npm run build` replaces the contents of `react/` with a GitHub Pages-ready
+bundle. GitHub Pages serves this repository from `main`, so publishing means
+committing the generated `react/` directory and pushing `main`.
+
 ## License
-This project is open source and available under the MIT License.
+
+MIT

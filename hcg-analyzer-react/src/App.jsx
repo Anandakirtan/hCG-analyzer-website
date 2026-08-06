@@ -1,48 +1,68 @@
-import React, { useState } from 'react'
+import { useState } from 'react'
 import ConceptionCalculator from './components/ConceptionCalculator'
 import HCGAnalysis from './components/HCGAnalysis'
 import './App.css'
 
+const parseDate = (value) => value ? new Date(`${value}T00:00:00Z`) : null
+
+const addDays = (value, days) => {
+  const date = parseDate(value)
+  if (!date) return ''
+  date.setUTCDate(date.getUTCDate() + days)
+  return date.toISOString().slice(0, 10)
+}
+
 function App() {
-  const [lastMenstrDate, setLastMenstrDate] = useState(null)
-  const [cycleLength, setCycleLength] = useState('')
-  const [conceptionDate, setConceptionDate] = useState(null)
+  const [lastMenstrDate, setLastMenstrDate] = useState('')
+  const [cycleLength, setCycleLength] = useState('28')
+  const [conceptionDate, setConceptionDate] = useState('')
+
+  const numericCycleLength = Number(cycleLength)
+  const canEstimateConception = Boolean(lastMenstrDate)
+    && Number.isFinite(numericCycleLength)
+    && numericCycleLength >= 15
+    && numericCycleLength <= 60
 
   const handleCalculate = () => {
-    if (!lastMenstrDate || !cycleLength) return
-    const ovulationDay = parseInt(cycleLength) - 14
-    if (isNaN(ovulationDay)) return
-    const calculated = new Date(lastMenstrDate)
-    calculated.setDate(calculated.getDate() + ovulationDay)
-    setConceptionDate(calculated)
+    if (!canEstimateConception) return
+    setConceptionDate(addDays(lastMenstrDate, numericCycleLength - 14))
   }
 
-  const canCalculate = lastMenstrDate && cycleLength
+  const gestationalStartDate = lastMenstrDate || addDays(conceptionDate, -14)
 
   return (
-    <div className="container">
-      <div id="wrapper">
-        <ConceptionCalculator
-          lastMenstrDate={lastMenstrDate}
-          onLastMenstrDateChange={setLastMenstrDate}
-          cycleLength={cycleLength}
-          onCycleLengthChange={setCycleLength}
-          conceptionDate={conceptionDate}
-          onConceptionDateChange={setConceptionDate}
-        />
-        <div id="calculate_bar">
-          <button
-            className="calculate-btn"
-            onClick={handleCalculate}
-            disabled={!canCalculate}
-            title="Рассчитать дату зачатия и обновить все анализы"
-          >
-            Рассчитать всё
-          </button>
+    <main className="app-shell">
+      <header className="hero">
+        <div>
+          <p className="eyebrow">Динамика β-ХГЧ</p>
+          <h1>Анализ результатов ХГЧ</h1>
+          <p className="hero-copy">
+            Сравните несколько результатов, оцените изменение во времени и
+            посмотрите широкий справочный диапазон для акушерского срока.
+          </p>
         </div>
-        <HCGAnalysis conceptionDate={conceptionDate} />
-      </div>
-    </div>
+        <div className="medical-note" role="note">
+          <strong>Важно</strong>
+          <span>
+            Калькулятор не подтверждает жизнеспособность или расположение
+            беременности и не заменяет врача, повторный анализ или УЗИ.
+          </span>
+        </div>
+      </header>
+
+      <ConceptionCalculator
+        lastMenstrDate={lastMenstrDate}
+        onLastMenstrDateChange={setLastMenstrDate}
+        cycleLength={cycleLength}
+        onCycleLengthChange={setCycleLength}
+        conceptionDate={conceptionDate}
+        onConceptionDateChange={setConceptionDate}
+        onCalculate={handleCalculate}
+        canCalculate={canEstimateConception}
+      />
+
+      <HCGAnalysis gestationalStartDate={gestationalStartDate} />
+    </main>
   )
 }
 

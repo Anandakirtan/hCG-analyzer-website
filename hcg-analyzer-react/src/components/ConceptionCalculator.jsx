@@ -1,17 +1,20 @@
-import React from 'react';
-import DatePicker from 'react-datepicker';
-import "react-datepicker/dist/react-datepicker.css";
+const MS_PER_DAY = 24 * 60 * 60 * 1000
 
-const MS_PER_DAY = 24 * 60 * 60 * 1000;
-const MS_PER_WEEK = 7 * MS_PER_DAY;
+const parseDate = (value) => value ? new Date(`${value}T00:00:00Z`) : null
 
-const dateDiff = (date) => {
-  if (!date) return null;
-  const elapsed = new Date() - date;
-  const weeks = Math.floor(elapsed / MS_PER_WEEK);
-  const days = Math.floor((elapsed % MS_PER_WEEK) / MS_PER_DAY);
-  return `${weeks} недель и ${days} дней`;
-};
+const formatElapsed = (value, offsetDays = 0) => {
+  const date = parseDate(value)
+  if (!date) return 'Укажите дату'
+
+  const now = new Date()
+  const todayUtc = Date.UTC(now.getFullYear(), now.getMonth(), now.getDate())
+  const days = Math.floor((todayUtc - date.getTime()) / MS_PER_DAY) + offsetDays
+  if (days < 0) return 'Дата находится в будущем'
+
+  const weeks = Math.floor(days / 7)
+  const remainder = days % 7
+  return `${weeks} нед. ${remainder} дн.`
+}
 
 const ConceptionCalculator = ({
   lastMenstrDate,
@@ -20,43 +23,81 @@ const ConceptionCalculator = ({
   onCycleLengthChange,
   conceptionDate,
   onConceptionDateChange,
-}) => {
-  return (
-    <div id="conception_wrapper">
-      <div className="conception_bar">
-        <div className="conception_input">
-          <p className="conception_title">Дата последней менструации</p>
-          <DatePicker
-            selected={lastMenstrDate}
-            onChange={onLastMenstrDateChange}
-            dateFormat="dd/MM/yyyy"
-          />
+  onCalculate,
+  canCalculate,
+}) => (
+  <section className="section-card" aria-labelledby="dates-title">
+    <div className="section-heading">
+      <div>
+        <p className="step-label">Шаг 1</p>
+        <h2 id="dates-title">Уточните срок</h2>
+      </div>
+      <p>Можно заполнить дату менструации или известную дату зачатия.</p>
+    </div>
+
+    <div className="date-grid">
+      <div className="date-card">
+        <div className="field-group">
+          <label htmlFor="last-menstruation">Первый день последней менструации</label>
           <input
-            type="number"
-            value={cycleLength}
-            onChange={e => onCycleLengthChange(e.target.value)}
-            placeholder="Длина цикла"
+            id="last-menstruation"
+            type="date"
+            value={lastMenstrDate}
+            onChange={(event) => onLastMenstrDateChange(event.target.value)}
           />
         </div>
-        <div className="conception_output">
-          <p>{dateDiff(lastMenstrDate)}</p>
+        <div className="field-group cycle-field">
+          <label htmlFor="cycle-length">Средняя длина цикла</label>
+          <div className="input-suffix">
+            <input
+              id="cycle-length"
+              type="number"
+              min="15"
+              max="60"
+              inputMode="numeric"
+              value={cycleLength}
+              onChange={(event) => onCycleLengthChange(event.target.value)}
+            />
+            <span>дней</span>
+          </div>
+        </div>
+        <div className="date-summary">
+          <span>Акушерский срок сегодня</span>
+          <strong>{formatElapsed(lastMenstrDate)}</strong>
         </div>
       </div>
-      <div className="conception_bar">
-        <div className="conception_input">
-          <p className="conception_title">Дата зачатия</p>
-          <DatePicker
-            selected={conceptionDate}
-            onChange={onConceptionDateChange}
-            dateFormat="dd/MM/yyyy"
+
+      <div className="date-card accent-card">
+        <div className="field-group">
+          <label htmlFor="conception-date">Предполагаемая дата зачатия</label>
+          <input
+            id="conception-date"
+            type="date"
+            value={conceptionDate}
+            onChange={(event) => onConceptionDateChange(event.target.value)}
           />
         </div>
-        <div className="conception_output">
-          <p>{dateDiff(conceptionDate)}</p>
+        <button
+          className="secondary-button"
+          type="button"
+          onClick={onCalculate}
+          disabled={!canCalculate}
+        >
+          Рассчитать по циклу
+        </button>
+        <div className="date-summary">
+          <span>От зачатия сегодня</span>
+          <strong>{formatElapsed(conceptionDate)}</strong>
         </div>
       </div>
     </div>
-  );
-};
 
-export default ConceptionCalculator;
+    <p className="supporting-copy">
+      Дата зачатия по циклу — ориентировочная. Для справочных диапазонов используется
+      акушерский срок от последней менструации; если известна только дата зачатия,
+      калькулятор условно добавляет 14 дней.
+    </p>
+  </section>
+)
+
+export default ConceptionCalculator
