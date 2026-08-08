@@ -471,15 +471,40 @@ input:focus {
   gap: 24px;
 }
 
-.method-grid p {
+.method-grid p,
+.method-item {
   margin-bottom: 0;
   color: var(--muted);
   font-size: 0.86rem;
 }
 
-.method-grid strong {
+.method-grid strong,
+.method-item > strong {
   display: block;
   margin-bottom: 5px;
+  color: var(--ink);
+}
+
+.method-grid a {
+  color: var(--brand-dark);
+  font-weight: 700;
+  text-underline-offset: 3px;
+}
+
+.method-item p {
+  font-size: inherit;
+}
+
+.method-item ul {
+  padding-left: 20px;
+  margin: 9px 0;
+}
+
+.method-item li + li {
+  margin-top: 4px;
+}
+
+.method-item b {
   color: var(--ink);
 }
 
