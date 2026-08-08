@@ -49,6 +49,8 @@ const HCGChart = ({ analyses, gestationalStartDate }) => {
       date: analysis.date,
       timestamp: parseDate(analysis.date).getTime(),
       value: Number(analysis.hcg),
+      range: analysis.range,
+      hasCustomRange: analysis.hasCustomRange,
     }))
     .sort((left, right) => left.timestamp - right.timestamp), [analyses])
 
@@ -101,6 +103,9 @@ const HCGChart = ({ analyses, gestationalStartDate }) => {
   const allValues = [
     ...points.map(({ value }) => value),
     ...referenceSamples.flatMap(({ lower, upper }) => [lower, upper]),
+    ...points
+      .filter(({ hasCustomRange, range }) => hasCustomRange && range)
+      .flatMap(({ range }) => [range.lower, range.upper]),
   ]
   const maximumValue = Math.max(10, ...allValues)
   const yTicks = getTickValues(maximumValue)
@@ -131,8 +136,15 @@ const HCGChart = ({ analyses, gestationalStartDate }) => {
     : null
 
   const xTicks = createDateTicks(xMinimum, xMaximum, width < 520 ? 3 : 5)
+  const customReferences = points.filter(({ hasCustomRange, range }) => (
+    hasCustomRange && range
+  ))
   const accessibleSummary = points.map((point) => (
-    `${fullDateFormatter.format(point.timestamp)}: ${valueFormatter.format(point.value)} мМЕ/мл`
+    `${fullDateFormatter.format(point.timestamp)}: ${valueFormatter.format(point.value)} мМЕ/мл${
+      point.hasCustomRange && point.range
+        ? `, пользовательский диапазон ${valueFormatter.format(point.range.lower)}–${valueFormatter.format(point.range.upper)}`
+        : ''
+    }`
   )).join('; ')
 
   return (
@@ -145,6 +157,9 @@ const HCGChart = ({ analyses, gestationalStartDate }) => {
         <div className="chart-legend" aria-label="Легенда графика">
           <span><i className="legend-line" aria-hidden="true" />Результаты</span>
           {bandPath && <span><i className="legend-band" aria-hidden="true" />Справочный диапазон</span>}
+          {customReferences.length > 0 && (
+            <span><i className="legend-custom-reference" aria-hidden="true" />Ваши референсы</span>
+          )}
         </div>
       </div>
 
@@ -214,6 +229,19 @@ const HCGChart = ({ analyses, gestationalStartDate }) => {
 
           <g clipPath={`url(#${clipId})`}>
             {bandPath && <path className="reference-band" d={bandPath} />}
+            {customReferences.map((point) => {
+              const x = xScale(point.timestamp)
+              const upperY = yScale(point.range.upper)
+              const lowerY = yScale(point.range.lower)
+              return (
+                <g className="custom-reference" key={`reference-${point.id}`}>
+                  <title>{`Ваш диапазон: ${valueFormatter.format(point.range.lower)}–${valueFormatter.format(point.range.upper)} мМЕ/мл`}</title>
+                  <line x1={x} x2={x} y1={upperY} y2={lowerY} />
+                  <line x1={x - 5} x2={x + 5} y1={upperY} y2={upperY} />
+                  <line x1={x - 5} x2={x + 5} y1={lowerY} y2={lowerY} />
+                </g>
+              )
+            })}
             {points.length > 1 && <path className="result-line" d={linePath} />}
             {points.map((point, index) => {
               const x = xScale(point.timestamp)

@@ -32,7 +32,7 @@ export const ACOG_SOURCE = {
 export const getHcgReferenceRange = (gestationalDays) => {
   if (!Number.isFinite(gestationalDays) || gestationalDays < 0) return null
 
-  const week = Math.floor(gestationalDays / 7) + 1
+  const week = Math.floor(gestationalDays / 7)
   return HCG_REFERENCE_RANGES.find(
     ({ fromWeek, toWeek }) => week >= fromWeek && week <= toWeek,
   ) ?? null

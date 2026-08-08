@@ -9,7 +9,14 @@ import {
 import HCGChart from './HCGChart'
 
 const MS_PER_DAY = 24 * 60 * 60 * 1000
-const numberFormatter = new Intl.NumberFormat('ru-RU')
+
+const createAnalysis = (id) => ({
+  id,
+  date: '',
+  hcg: '',
+  referenceLower: null,
+  referenceUpper: null,
+})
 
 const parseDate = (value) => value ? new Date(`${value}T00:00:00Z`) : null
 
@@ -30,6 +37,26 @@ const getRangeResult = (hcg, range) => {
   if (hcg < range.lower) return { label: 'Ниже справочного', tone: 'warning' }
   if (hcg > range.upper) return { label: 'Выше справочного', tone: 'warning' }
   return { label: 'В диапазоне', tone: 'positive' }
+}
+
+const getReferenceState = (analysis, tableRange) => {
+  const lowerValue = analysis.referenceLower ?? tableRange?.lower ?? ''
+  const upperValue = analysis.referenceUpper ?? tableRange?.upper ?? ''
+  const lower = lowerValue === '' ? Number.NaN : Number(lowerValue)
+  const upper = upperValue === '' ? Number.NaN : Number(upperValue)
+  const hasAnyValue = lowerValue !== '' || upperValue !== ''
+  const isValid = Number.isFinite(lower)
+    && Number.isFinite(upper)
+    && lower >= 0
+    && upper >= lower
+
+  return {
+    lowerValue,
+    upperValue,
+    range: isValid ? { lower, upper } : null,
+    isInvalid: hasAnyValue && !isValid,
+    isCustom: analysis.referenceLower !== null || analysis.referenceUpper !== null,
+  }
 }
 
 const getPreviousAnalysis = (analysis, analyses) => analyses
@@ -69,10 +96,6 @@ const getTrend = (analysis, previous) => {
   }
 }
 
-const formatRange = (range) => range
-  ? `${numberFormatter.format(range.lower)}–${numberFormatter.format(range.upper)}`
-  : '—'
-
 const formatTrend = (trend, gestationalDays) => {
   if (!trend) return { primary: '—', secondary: '' }
 
@@ -96,13 +119,13 @@ const formatTrend = (trend, gestationalDays) => {
 }
 
 const HCGAnalysis = ({ gestationalStartDate }) => {
-  const [analyses, setAnalyses] = useState([{ id: 1, date: '', hcg: '' }])
+  const [analyses, setAnalyses] = useState([createAnalysis(1)])
   const nextId = useRef(2)
 
   const addAnalysis = () => {
     const id = nextId.current
     nextId.current += 1
-    setAnalyses((current) => [...current, { id, date: '', hcg: '' }])
+    setAnalyses((current) => [...current, createAnalysis(id)])
   }
 
   const updateAnalysis = (id, field, value) => {
@@ -113,8 +136,16 @@ const HCGAnalysis = ({ gestationalStartDate }) => {
 
   const removeAnalysis = (id) => {
     setAnalyses((current) => current.length === 1
-      ? [{ ...current[0], date: '', hcg: '' }]
+      ? [createAnalysis(current[0].id)]
       : current.filter((analysis) => analysis.id !== id))
+  }
+
+  const resetReference = (id) => {
+    setAnalyses((current) => current.map((analysis) => (
+      analysis.id === id
+        ? { ...analysis, referenceLower: null, referenceUpper: null }
+        : analysis
+    )))
   }
 
   const enriched = analyses.map((analysis) => {
@@ -122,14 +153,20 @@ const HCGAnalysis = ({ gestationalStartDate }) => {
       ? dateDiff(analysis.date, gestationalStartDate)
       : null
     const hcg = analysis.hcg === '' ? Number.NaN : Number(analysis.hcg)
-    const range = getHcgReferenceRange(gestationalDays)
+    const tableRange = getHcgReferenceRange(gestationalDays)
+    const reference = getReferenceState(analysis, tableRange)
     const previous = getPreviousAnalysis(analysis, analyses)
 
     return {
       ...analysis,
       gestationalDays,
-      range,
-      rangeResult: getRangeResult(hcg, range),
+      tableRange,
+      range: reference.range,
+      referenceLowerValue: reference.lowerValue,
+      referenceUpperValue: reference.upperValue,
+      hasCustomRange: reference.isCustom,
+      rangeIsInvalid: reference.isInvalid,
+      rangeResult: getRangeResult(hcg, reference.range),
       trend: getTrend(analysis, previous),
     }
   })
@@ -148,8 +185,8 @@ const HCGAnalysis = ({ gestationalStartDate }) => {
 
       {!gestationalStartDate && (
         <p className="inline-notice" role="status">
-          Укажите дату выше, чтобы увидеть акушерский срок и справочный диапазон.
-          Динамику между анализами можно рассчитать и без неё.
+          Укажите дату выше, чтобы табличные референсы заполнились автоматически.
+          Свой диапазон и динамику между анализами можно указать и рассчитать без неё.
         </p>
       )}
 
@@ -158,7 +195,7 @@ const HCGAnalysis = ({ gestationalStartDate }) => {
           <div role="columnheader">Дата анализа</div>
           <div role="columnheader">β-ХГЧ, мМЕ/мл</div>
           <div role="columnheader">Акушерский срок</div>
-          <div role="columnheader">Справочный диапазон</div>
+          <div role="columnheader">Референсы, мМЕ/мл</div>
           <div role="columnheader">Динамика</div>
           <div role="columnheader"><span className="sr-only">Действия</span></div>
         </div>
@@ -196,8 +233,63 @@ const HCGAnalysis = ({ gestationalStartDate }) => {
               <div className="table-cell" role="cell" data-label="Акушерский срок">
                 <strong>{formatGestationalAge(analysis.gestationalDays)}</strong>
               </div>
-              <div className="table-cell range-cell" role="cell" data-label="Справочный диапазон">
-                <strong>{formatRange(analysis.range)}</strong>
+              <div className="table-cell range-cell" role="cell" data-label="Референсы, мМЕ/мл">
+                <div
+                  className="reference-inputs"
+                  role="group"
+                  aria-label={`Референсный диапазон для анализа ${index + 1}`}
+                >
+                  <label className="sr-only" htmlFor={`reference-lower-${analysis.id}`}>
+                    Нижняя граница референса для анализа {index + 1}
+                  </label>
+                  <input
+                    id={`reference-lower-${analysis.id}`}
+                    type="number"
+                    min="0"
+                    step="any"
+                    inputMode="decimal"
+                    placeholder="От"
+                    aria-invalid={analysis.rangeIsInvalid}
+                    value={analysis.referenceLowerValue}
+                    onChange={(event) => updateAnalysis(analysis.id, 'referenceLower', event.target.value)}
+                  />
+                  <span aria-hidden="true">—</span>
+                  <label className="sr-only" htmlFor={`reference-upper-${analysis.id}`}>
+                    Верхняя граница референса для анализа {index + 1}
+                  </label>
+                  <input
+                    id={`reference-upper-${analysis.id}`}
+                    type="number"
+                    min="0"
+                    step="any"
+                    inputMode="decimal"
+                    placeholder="До"
+                    aria-invalid={analysis.rangeIsInvalid}
+                    value={analysis.referenceUpperValue}
+                    onChange={(event) => updateAnalysis(analysis.id, 'referenceUpper', event.target.value)}
+                  />
+                </div>
+                <div className="reference-meta">
+                  <span>
+                    {analysis.hasCustomRange
+                      ? 'Ваш диапазон'
+                      : analysis.tableRange ? 'Cleveland Clinic' : 'Введите вручную'}
+                  </span>
+                  {analysis.hasCustomRange && analysis.tableRange && (
+                    <button
+                      className="reference-reset-button"
+                      type="button"
+                      onClick={() => resetReference(analysis.id)}
+                    >
+                      Вернуть табличный
+                    </button>
+                  )}
+                </div>
+                {analysis.rangeIsInvalid && (
+                  <span className="field-error" role="alert">
+                    Проверьте обе границы
+                  </span>
+                )}
                 {analysis.rangeResult && (
                   <span className={`status-badge ${analysis.rangeResult.tone}`}>
                     {analysis.rangeResult.label}
@@ -237,7 +329,9 @@ const HCGAnalysis = ({ gestationalStartDate }) => {
             </a>{' '}
             для сывороточного ХГЧ по акушерским неделям — от первого дня последней
             менструации. Это широкие справочные интервалы: референсы конкретной
-            лаборатории могут отличаться.
+            лаборатории могут отличаться. Их можно изменить в каждой строке;
+            пользовательский диапазон применяется к оценке результата и отмечается
+            на графике отдельной вертикальной линией.
           </p>
           <div className="method-item">
             <strong>Что означают 49%, 40% и 33%</strong>

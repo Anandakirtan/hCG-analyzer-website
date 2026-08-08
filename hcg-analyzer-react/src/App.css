@@ -243,7 +243,7 @@ input:focus {
 
 .analysis-row {
   display: grid;
-  grid-template-columns: minmax(145px, 0.95fr) minmax(150px, 0.9fr) minmax(130px, 0.8fr) minmax(190px, 1.1fr) minmax(230px, 1.5fr) 52px;
+  grid-template-columns: minmax(145px, 0.9fr) minmax(150px, 0.85fr) minmax(130px, 0.75fr) minmax(250px, 1.35fr) minmax(230px, 1.35fr) 52px;
   gap: 14px;
   align-items: center;
   min-width: 1020px;
@@ -281,6 +281,53 @@ input:focus {
   flex-direction: column;
   align-items: flex-start;
   gap: 5px;
+}
+
+.reference-inputs {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+  gap: 6px;
+  align-items: center;
+  width: 100%;
+}
+
+.reference-inputs input {
+  min-height: 38px;
+  padding: 7px 8px;
+}
+
+.reference-inputs span {
+  color: var(--muted);
+}
+
+.reference-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 8px;
+  align-items: center;
+  color: var(--muted);
+  font-size: 0.72rem;
+}
+
+.reference-reset-button {
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--brand-dark);
+  font: inherit;
+  font-weight: 700;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.reference-reset-button:hover {
+  color: var(--brand);
+}
+
+.field-error {
+  color: var(--warning);
+  font-size: 0.74rem;
+  font-weight: 700;
 }
 
 .trend-cell span {
@@ -383,6 +430,10 @@ input:focus {
   background: rgba(57, 150, 113, 0.16);
 }
 
+.legend-custom-reference {
+  border-top: 3px solid #ad6c28;
+}
+
 .chart-canvas {
   width: 100%;
   min-width: 0;
@@ -434,6 +485,12 @@ input:focus {
   fill: rgba(57, 150, 113, 0.14);
   stroke: rgba(22, 115, 92, 0.35);
   stroke-width: 1;
+}
+
+.custom-reference line {
+  stroke: #ad6c28;
+  stroke-linecap: round;
+  stroke-width: 2;
 }
 
 .result-line {
